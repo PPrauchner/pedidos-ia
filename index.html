@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Os Seis Pedidos</title>
+<style>
+  /* Layout: one phone-width column — the six pedidos as copy cards, then the rules. Same warm-paper/navy tokens as the deck. */
+  :root{
+    --ground:#FBF6EE;
+    --ground-2:#F2E9DA;
+    --panel:#FFFFFF;
+    --ink:#12283F;
+    --ink-2:#546A80;
+    --rule:#DFD2BE;
+    --accent:#C85A14;
+    --accent-soft:#F6E3D2;
+    --accent-ink:#FFFFFF;
+    --navy:#12314F;
+
+    --sans:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,"Roboto Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0B1E31;
+      --ground-2:#12304E;
+      --panel:#12304E;
+      --ink:#F2EADC;
+      --ink-2:#9DB2C7;
+      --rule:#23445F;
+      --accent:#F08A3C;
+      --accent-soft:#1D3B58;
+      --accent-ink:#0B1E31;
+      --navy:#F2EADC;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0B1E31;
+    --ground-2:#12304E;
+    --panel:#12304E;
+    --ink:#F2EADC;
+    --ink-2:#9DB2C7;
+    --rule:#23445F;
+    --accent:#F08A3C;
+    --accent-soft:#1D3B58;
+    --accent-ink:#0B1E31;
+    --navy:#F2EADC;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:1rem;
+    line-height:1.5;
+  }
+  .page{
+    max-width:40rem;
+    margin:0 auto;
+    padding-block:2rem 3rem;
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+    display:flex;flex-direction:column;gap:2.25rem;
+  }
+
+  .eyebrow{
+    margin:0;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--accent);
+  }
+  h1{margin:0;font-size:clamp(1.9rem,7vw,2.6rem);line-height:1.05;letter-spacing:-.025em;font-weight:800;text-wrap:balance;}
+  h1 em{font-style:normal;color:var(--accent);}
+  h2{margin:0;font-size:1.3rem;line-height:1.2;letter-spacing:-.01em;font-weight:800;text-wrap:balance;}
+  .lede{margin:0;color:var(--ink-2);font-size:1.05rem;max-width:62ch;}
+
+  header{display:flex;flex-direction:column;gap:.9rem;}
+
+  /* how to use: a real three-step sequence */
+  ol.how{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;}
+  ol.how li{border-top:3px solid var(--accent);padding-top:.6rem;font-size:.92rem;line-height:1.35;min-width:0;}
+  ol.how b{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;color:var(--accent);}
+  ol.how a{color:var(--accent);font-weight:700;}
+
+  nav.index{display:flex;flex-wrap:wrap;gap:.5rem;}
+  nav.index a{
+    font-size:.88rem;font-weight:600;color:var(--ink);text-decoration:none;
+    border:1px solid var(--rule);background:var(--panel);padding:.4rem .75rem;border-radius:999px;
+  }
+  nav.index a:hover{border-color:var(--accent);color:var(--accent);}
+
+  .uses{display:flex;flex-direction:column;gap:1.25rem;}
+  .use{
+    background:var(--panel);border:1px solid var(--rule);
+    padding:1.1rem;display:flex;flex-direction:column;gap:.75rem;
+    scroll-margin-top:1rem;
+  }
+  .use .top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+  .use .top div{display:flex;flex-direction:column;gap:.2rem;min-width:0;}
+  .use .saves{margin:0;font-size:.9rem;color:var(--ink-2);}
+
+  pre.prompt{
+    margin:0;font-family:var(--mono);font-size:.84rem;line-height:1.6;
+    background:var(--ground-2);border-left:4px solid var(--accent);
+    padding:.85rem 1rem;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink);
+  }
+  pre.prompt b{color:var(--accent);font-weight:700;}
+
+  button.copy{
+    flex:none;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;
+    background:var(--accent);color:var(--accent-ink);border:0;padding:.5rem .9rem;
+  }
+  button.copy[data-done]{background:var(--navy);color:var(--ground);}
+  button.copy:focus-visible,nav.index a:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .warn{
+    margin:0;font-size:.9rem;line-height:1.45;
+    background:var(--accent-soft);padding:.7rem .9rem;border-left:4px solid var(--accent);
+  }
+
+  section.block{display:flex;flex-direction:column;gap:.9rem;}
+  ul.rules{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+  ul.rules li{padding-left:1.6rem;position:relative;max-width:62ch;}
+  ul.rules li::before{
+    content:"";position:absolute;left:0;top:.42em;width:.8rem;height:.8rem;
+    border:3px solid var(--accent);border-radius:50%;
+  }
+
+  footer{
+    border-top:1px solid var(--rule);padding-top:1.2rem;
+    display:flex;flex-direction:column;gap:.35rem;font-size:.85rem;color:var(--ink-2);
+  }
+  footer b{color:var(--ink);}
+
+  @media (max-width:30rem){
+    ol.how{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <header>
+    <p class="eyebrow">Educador 5.0 · UNIPAMPA · AI Horizon Labs</p>
+    <h1>A IA faz o rascunho.<br><em>Você faz a aula.</em></h1>
+    <p class="lede">Os seis pedidos da conversa, prontos para usar. Escolha um, troque o que está em laranja pela sua turma e cole na IA.</p>
+    <ol class="how">
+      <li><b>1</b>Toque em <strong>Copiar</strong> no pedido que você quer.</li>
+      <li><b>2</b>Abra o <a href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPT</a> e cole.</li>
+      <li><b>3</b>Troque o que está entre colchetes. Leia e peça ajustes.</li>
+    </ol>
+  </header>
+
+  <nav class="index" aria-label="Os seis pedidos">
+    <a href="#planejar">Planejar a semana</a>
+    <a href="#niveis">Três níveis</a>
+    <a href="#texto">Texto adaptado</a>
+    <a href="#bilhete">Bilhete</a>
+    <a href="#exercicios">Exercícios</a>
+    <a href="#parecer">Parecer</a>
+  </nav>
+
+  <div class="uses">
+
+    <article class="use" id="planejar">
+      <div class="top">
+        <div><h2>Planejar a semana</h2><p class="saves">Um rascunho de plano a partir do conteúdo e da BNCC.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Sou professor(a) do <b>[ANO]</b> ano do Ensino Fundamental. Minha turma: <b>[como ela é: quantos alunos, como lê, do que gosta]</b>.
+Monte um rascunho de planejamento para <b>[QUANTOS]</b> dias sobre <b>[CONTEÚDO]</b>, ligado à habilidade <b>[CÓDIGO BNCC]</b>.
+Para cada dia: o objetivo, uma atividade principal de <b>[TEMPO]</b> minutos e um jeito rápido de ver se a turma aprendeu.
+Use materiais simples, que uma escola pública tem.</pre>
+    </article>
+
+    <article class="use" id="niveis">
+      <div class="top">
+        <div><h2>A mesma atividade em três níveis</h2><p class="saves">A mesma habilidade para a turma inteira.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Sou professor(a) do <b>[ANO]</b> ano. Crie uma atividade sobre <b>[CONTEÚDO]</b> em três versões, para a mesma aula:
+1) para quem está começando: <b>[como essas crianças estão]</b>;
+2) para quem já <b>[faz o básico]</b>;
+3) para quem já <b>[vai além]</b>.
+As três trabalham a mesma habilidade e têm <b>[NÚMERO]</b> questões. Enunciados curtos, linguagem simples.</pre>
+    </article>
+
+    <article class="use" id="texto">
+      <div class="top">
+        <div><h2>Texto adaptado</h2><p class="saves">O texto do livro no jeito como a sua turma lê.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Reescreva o texto abaixo para uma turma do <b>[ANO]</b> ano em que <b>[como a turma lê, por exemplo: metade ainda lê só palavras simples]</b>.
+Mantenha as informações principais. Frases curtas, palavras do dia a dia, no máximo <b>[10]</b> linhas.
+No fim, sugira 3 perguntas de compreensão.
+Texto: <b>[COLE AQUI O TEXTO DO LIVRO]</b></pre>
+    </article>
+
+    <article class="use" id="bilhete">
+      <div class="top">
+        <div><h2>Bilhete às famílias</h2><p class="saves">Claro, curto e gentil, em um minuto.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Escreva um bilhete curto para as famílias da minha turma do <b>[ANO]</b> ano sobre <b>[ASSUNTO: passeio, reunião, material, recado]</b>.
+O que as famílias precisam saber: <b>[DATA, HORÁRIO, O QUE PRECISAM FAZER]</b>.
+Tom gentil e claro, linguagem simples, no máximo <b>[6]</b> linhas.</pre>
+    </article>
+
+    <article class="use" id="exercicios">
+      <div class="top">
+        <div><h2>Exercícios e ideias de atividade</h2><p class="saves">Em quantidade, para você escolher os melhores.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Sou professor(a) do <b>[ANO]</b> ano. Crie <b>[NÚMERO]</b> exercícios sobre <b>[CONTEÚDO]</b>, do mais fácil ao mais difícil.
+Tipo: <b>[contas / problemas / ditado / interpretação de texto / completar]</b>.
+Use situações do dia a dia de crianças do interior do Rio Grande do Sul. Coloque o gabarito no final, separado.</pre>
+    </article>
+
+    <article class="use" id="parecer">
+      <div class="top">
+        <div><h2>Parecer descritivo</h2><p class="saves">As suas anotações soltas organizadas em texto.</p></div>
+        <button class="copy" type="button">Copiar</button>
+      </div>
+      <pre class="prompt">Organize as anotações abaixo em um parecer descritivo de um aluno do <b>[ANO]</b> ano, referente ao <b>[TRIMESTRE]</b>.
+Use só o que está nas anotações e não invente nada sobre a criança. Tom respeitoso, com os avanços antes das dificuldades, em <b>[2]</b> parágrafos.
+Onde entraria o nome, escreva ALUNO.
+Anotações: <b>[o que você observou, sem nome e sem laudo]</b></pre>
+      <p class="warn"><strong>Nome, laudo e diagnóstico não entram.</strong> Descreva o que a criança faz, não quem ela é. Você troca ALUNO pelo nome depois, à mão, e lê tudo antes de assinar.</p>
+    </article>
+
+  </div>
+
+  <section class="block" aria-labelledby="regras">
+    <p class="eyebrow">Vale para qualquer pedido</p>
+    <h2 id="regras">Três regras que não mudam</h2>
+    <ul class="rules">
+      <li><strong>A IA erra com confiança.</strong> Ela escreve o errado com a mesma segurança do certo. Leia tudo antes de levar para a turma ou de assinar.</li>
+      <li><strong>Nome de criança não entra na ferramenta.</strong> Nem nome, nem nota, nem laudo. Escreva "um aluno que…", nunca o nome dele.</li>
+      <li><strong>Mande o seu material junto.</strong> Cole o texto do livro ou da apostila. A resposta melhora muito quando ela lê o seu conteúdo em vez de inventar.</li>
+    </ul>
+  </section>
+
+  <section class="block" aria-labelledby="melhor">
+    <h2 id="melhor">Para a resposta ficar boa</h2>
+    <ul class="rules">
+      <li><strong>Não aceite a primeira resposta.</strong> Peça "mais curto", "mais simples", "troque essa palavra".</li>
+      <li><strong>Deixe ela perguntar.</strong> Comece com "antes de responder, me faça três perguntas sobre a turma".</li>
+      <li><strong>Guarde o pedido que funcionou</strong> no bloco de notas do celular, já com os dados da sua turma.</li>
+    </ul>
+  </section>
+
+  <article class="use" id="carta">
+    <div class="top">
+      <div><h2>Para deixar a aula mais divertida</h2><p class="saves">Um personagem escreve para a turma pedindo ajuda com o conteúdo.</p></div>
+      <button class="copy" type="button">Copiar</button>
+    </div>
+    <pre class="prompt">Escreva uma carta de <b>[PERSONAGEM: um ET perdido, um dinossauro, um quero-quero]</b> para a minha turma do <b>[ANO]</b> ano, pedindo ajuda com <b>[CONTEÚDO]</b>.
+Termine com um desafio que a turma resolve junta e responde em uma carta ou desenho.
+Frases curtas, palavras simples, no máximo <b>[10]</b> linhas. Tom divertido e misterioso.</pre>
+  </article>
+
+  <footer>
+    <span>Daqui a uma semana a gente se encontra de novo. Conte o que você usou e o que travou.</span>
+    <span><b>Educador 5.0</b> · Extensão 2025.EX.AL.5038 · Coord. Silvio Ereno Quincozes · silvioquincozes@unipampa.edu.br</span>
+    <span>Bolsista: Pietro Prauchner · UNIPAMPA · Campus Alegrete · AI Horizon Labs</span>
+  </footer>
+
+</main>
+
+<script>
+  document.querySelectorAll('button.copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = btn.closest('.use').querySelector('pre.prompt');
+      const done = () => {
+        btn.textContent = 'Copiado';
+        btn.setAttribute('data-done', '');
+        setTimeout(() => { btn.textContent = 'Copiar'; btn.removeAttribute('data-done'); }, 2000);
+      };
+      const selectText = () => {
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        btn.textContent = 'Selecionado: copie';
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(pre.textContent).then(done, selectText);
+      } else {
+        selectText();
+      }
+    });
+  });
+</script>
+</body>
+</html>
